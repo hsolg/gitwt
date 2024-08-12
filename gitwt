@@ -15,11 +15,26 @@
     {:flag {:coerce :boolean
             :desc "This is just a flag"}}})
 
+(defn find-git-dir []
+  (first (filter #(.endsWith (.getName %) ".git") (.listFiles (io/file ".")))))
+
+(defn list-non-git-dirs []
+(if-let [git-dir (find-git-dir)]
+  (let [git-dir-name (.getName (find-git-dir))
+        current-dir (io/file ".")
+        dirs (filter #(.isDirectory %) (.listFiles current-dir))]
+
+    (doseq [dir dirs]
+      (let [dir-name (.getName dir)]
+        (when (and (not= dir-name git-dir-name) (not= dir-name ".") (not= dir-name ".."))
+          (let [branch-name (str/trim (:out (sh "git" "-C" dir-name "branch" "--show-current")))]
+            (println dir-name branch-name)))))) (println "Git directory not found")))
+
 (defn -main
   [args]
   (let [opts (cli/parse-opts args cli-spec)]
     (if (or (:help opts) (:h opts))
       (println (show-help cli-spec))
-      (println opts))))
+      (list-non-git-dirs))))
 
 (-main *command-line-args*)
