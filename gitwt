@@ -6,6 +6,8 @@
          '[clojure.string :as str]
          '[clojure.pprint :refer [print-table]])
 
+;; Command line parsing
+
 (defn show-help
   [spec]
   (cli/format-opts (merge spec {:order (vec (keys (:spec spec)))})))
@@ -14,6 +16,8 @@
   {:spec
     {:flag {:coerce :boolean
             :desc "This is just a flag"}}})
+
+;; File operations
 
 (defn find-git-dir []
   (first (filter #(.endsWith (.getName %) ".git") (.listFiles (io/file ".")))))
@@ -29,6 +33,8 @@
         (when (and (not= dir-name git-dir-name) (not= dir-name ".") (not= dir-name ".."))
           (let [branch-name (str/trim (:out (sh "git" "-C" dir-name "branch" "--show-current")))]
             (println dir-name branch-name)))))) (println "Git directory not found")))
+
+;; Main
 
 (defn -main
   [args]
