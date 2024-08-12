@@ -6,15 +6,23 @@ on:
       - 'v[0-9]+.[0-9]+.[0-9]+'
 
 jobs:
-  build:
+  create-release:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Create directory for release files
+      run: mkdir -p release-files/gitwt
+
+    - name: Copy selected files to release directory
+      run: |
+        cp README.md release-files/gitwt/
+        cp gitwt release-files/gitwt/
+
     - name: Create zip archive
-      run: zip gitwt.zip README.md
+      run: zip -r gitwt.zip release-files/gitwt
 
     - name: Create GitHub Release
       id: create_release
