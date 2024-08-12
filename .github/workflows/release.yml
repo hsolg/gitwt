@@ -13,8 +13,8 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Create zip file
-      run: zip readme.zip README.md
+    - name: Create zip archive
+      run: zip gitwt.zip README.md
 
     - name: Create GitHub Release
       id: create_release
@@ -27,12 +27,12 @@ jobs:
         draft: false
         prerelease: false
 
-    - name: Upload README.zip to Release
+    - name: Upload zip archive to Release
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./readme.zip
-        asset_name: readme.zip
+        asset_path: ./gitwt.zip
+        asset_name: gitwt.zip
         asset_content_type: application/zip
