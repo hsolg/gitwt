@@ -1,0 +1,25 @@
+#!/usr/bin/env bb
+
+(require '[babashka.cli :as cli]
+         '[clojure.java.shell :refer [sh]]
+         '[clojure.java.io :as io]
+         '[clojure.string :as str]
+         '[clojure.pprint :refer [print-table]])
+
+(defn show-help
+  [spec]
+  (cli/format-opts (merge spec {:order (vec (keys (:spec spec)))})))
+
+(def cli-spec
+  {:spec
+    {:flag {:coerce :boolean
+            :desc "This is just a flag"}}})
+
+(defn -main
+  [args]
+  (let [opts (cli/parse-opts args cli-spec)]
+    (if (or (:help opts) (:h opts))
+      (println (show-help cli-spec))
+      (println opts))))
+
+(-main *command-line-args*)
